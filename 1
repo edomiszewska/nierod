@@ -1,0 +1,116 @@
+1. create database employees
+
+2. importujemy baze
+
+3. tworzymy:
+np.
+insert into locations (street_address, postal_code) values ('Chuj 1', '44-190');
+
+zeby usunac czy edytowac wystarczy kliknac, pokaze sie kod 
+np. usuwamy i widac:
+DELETE FROM `locations` WHERE `locations`.`id` = 6
+
+lub edycja czyli update
+UPDATE `locations` SET `street_address` = 'Chuj 2' WHERE `locations`.`id` = 7;
+
+insert tez jako wstaw-> dodaj
+i widac
+INSERT INTO `locations` (`id`, `street_address`, `postal_code`, `city`) VALUES ('2137', 'chuj 5', '55-908', 'Paryż');
+
+
+4. zapytanie z wyrazeniem regularnym:
+np regexp czyli rlike
+like tylko inna skladnia, to w stringu np. zaczyna sie od a, 3 znaki i konczy sie na b
+
+select first_name from employees where first_name rlike "^e...a$";
+
+
+5. funkcja czasu i daty
+INSERT INTO `employees` (`id`, `first_name`, `last_name`, `email`, `birth_date`, `hire_date`, `job_id`, `department_id`) VALUES ('3445', 'lol', 'fg', 'dsfdsg', TIME('2024-04-01 20:57:10'), TIME('2024-04-24 20:57:10'), '12', '2');
+
+lub policzyc np
+co bedzie za miesiac czy iles
+
+select date_add(NOW(), interval 5 DAY) as DataPo5Dniach
+
+
+6. dwie funkcje wbudowane
+
+np. left(bierze z lewej iles znakow), right(bierze z prawej iles), substring(wycina z jakiejs pozycji lub do konca)
+SELECT RIGHT(first_name,3) from employees; 
+substring ma 3 parametry (kolumna, poczatek, koniec)
+jeszcze np length czyli dlugosc, lub upper lower czyli duze male litery, round zaokragla (są w wstaw)
+
+7.
+a) like oraz in
+SELECT first_name FROM `employees` where first_name like "E%";
+
+
+dodajemy in (jakies wyniki maja byc)
+SELECT first_name FROM `employees` where first_name like "E%" and
+first_name in ("Ethan", "Eryk");
+
+b) between and
+SELECT hire_date from employees where hire_date BETWEEN "2019-04-22" and "2022-04-22";
+
+8. zapytania ze zlaczeniem left join i right join
+
+SELECT employees.first_name, jobs.title from employees 
+left join jobs on employees.job_id=jobs.id;
+
+SELECT employees.first_name, jobs.title from employees 
+right join jobs on employees.job_id=jobs.id;
+
+9. stworz instrukcje warunkowa i uzyj zmienna
+set @srednia=1000;
+SELECT min_salary, 
+case 
+WHEN
+min_salary<@srednia
+THEN
+"malo kasy biedak"
+ELSE
+"wiecej kasy"
+end
+AS kon
+from jobs;
+
+
+zmienna @
+a instrukcja warunkowa to np. case, if
+np. if min_salary>@srednia
+then
+"chuj"
+else
+"cipa"
+end if;
+
+10. stworz triggera
+najprostszy w kazdej tabeli to
+kolejna tabela "logi" i jakiegos loga
+czyli jak cos sie dzieje to tam zapisujesz
+
+tworzymy tabele
+czyli
+create table logi(
+
+id int auto-increment primary-key,
+nazwa varchar(50) not null,
+czas timestamp
+);
+
+teraz trigger
+
+DELIMITER $$
+create TRIGGER pracownik
+after delete on employees
+for each ROW
+BEGIN
+INSERT INTO logi(nazwa,czas) values ('dupa', NOW());
+end;
+$$
+DELIMITER ;
+
+11. widok
+
+create view
