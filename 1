@@ -111,6 +111,52 @@ end;
 $$
 DELIMITER ;
 
-11. widok
+11. widok to gotowa komenda, czyli np cos caly czas czyli wyswietl wyplaty 
+czyli np select tylko z wyplata czyli zamiast za kazdym razem wybierac raz robisz i widac
 
-create view
+
+create VIEW widok AS SELECT title as tytul, max_salary as duza_wyplata from jobs;
+
+12. funkcja 
+
+DELIMITER $$
+create function funkcja(city_name varchar(255))
+returns decimal(10,2)
+  SELECT MAX(j.max_salary)
+    INTO max_salary
+    FROM employees e
+    JOIN departments d ON e.department_id = d.id
+    JOIN jobs j ON e.job_id = j.id
+    JOIN locations l ON d.location_id = l.id
+    WHERE l.city = city_name;
+
+    RETURN max_salary;
+END;
+$$
+
+DELIMITER ;
+
+13. procedura cos chyba zmienia, wprowadza sie np nazwe miasta IDK
+
+DELIMITER $$
+
+CREATE PROCEDURE update_highest_salary_record(IN city_name VARCHAR(255))
+BEGIN
+    DECLARE max_salary DECIMAL(10, 2);
+    DECLARE employee_id INT;
+
+    SELECT MAX(j.max_salary), e.id
+    INTO max_salary, employee_id
+    FROM employees e
+    JOIN departments d ON e.department_id = d.id
+    JOIN jobs j ON e.job_id = j.id
+    JOIN locations l ON d.location_id = l.id
+    WHERE l.city = city_name;
+
+    UPDATE employees
+    SET highest_salary_flag = 1
+    WHERE id = employee_id;
+END;
+$$
+
+DELIMITER ;
